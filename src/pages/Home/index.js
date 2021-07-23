@@ -2,12 +2,51 @@ import {faPlus} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import React, {Component} from 'react';
 import {Text, StyleSheet, View, TouchableOpacity} from 'react-native';
+import {CardKontak} from '../../components';
+import FIREBASE from '../../config/FIREBASE';
 
 export default class Home extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      kontaks: {},
+      kontaksKey: [],
+    };
+  }
+
+  componentDidMount() {
+    FIREBASE.database()
+      .ref('Kontak')
+      .once('value', querySnapShot => {
+        let data = querySnapShot.val() ? querySnapShot.val() : {};
+        let kontakItem = {...data};
+
+        this.setState({
+          kontaks: kontakItem,
+          kontaksKey: Object.keys(kontakItem),
+        });
+      });
+  }
+
   render() {
+    const {kontaks, kontaksKey} = this.state;
     return (
       <View style={styles.page}>
-        <Text> Halaman Home </Text>
+        <View style={styles.header}>
+          <Text style={styles.title}>Daftar Kontak</Text>
+          <View style={styles.garis} />
+        </View>
+
+        <View style={styles.listKontak}>
+          {kontaksKey.length > 0 ? (
+            kontaksKey.map(key => (
+              <CardKontak key={key} kontakItem={kontaks[key]} id={key} />
+            ))
+          ) : (
+            <Text>Daftar Kosong</Text>
+          )}
+        </View>
 
         <View style={styles.wrapperButton}>
           <TouchableOpacity
@@ -24,6 +63,18 @@ export default class Home extends Component {
 const styles = StyleSheet.create({
   page: {
     flex: 1,
+  },
+  header: {
+    paddingHorizontal: 30,
+    paddingTop: 30,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  garis: {
+    borderWidth: 1,
+    marginTop: 10,
   },
   wrapperButton: {
     flex: 1,
@@ -45,5 +96,9 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
 
     elevation: 5,
+  },
+  listKontak: {
+    paddingHorizontal: 30,
+    marginTop: 20,
   },
 });

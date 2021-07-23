@@ -9,6 +9,6 @@ firebase.initializeApp({
   appId: '1:546321327022:web:33339fe81a76cf457cde3f',
 });
 
-const FIERBASE = firebase;
+const FIREBASE = firebase;
 
-export default FIERBASE;
+export default FIREBASE;
