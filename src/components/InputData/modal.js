@@ -55,7 +55,7 @@ const Detail = ({visibility, message}) => {
             <TouchableOpacity onPress={() => setVisible(false)}>
               <Image
                 source={require('../../../assets/x.png')}
-                style={{height: 30, width: 30}}
+                style={{height: 20, width: 20}}
               />
             </TouchableOpacity>
           </View>
@@ -63,7 +63,7 @@ const Detail = ({visibility, message}) => {
         <View style={{alignItems: 'center'}}>
           <Image
             source={require('../../../assets/success.png')}
-            style={{height: 150, width: 150, marginVertical: 10}}
+            style={{height: 100, width: 100, marginVertical: 10}}
           />
         </View>
 
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   },
   header: {
     width: '100%',
-    height: 40,
+    height: 20,
     alignItems: 'flex-end',
     justifyContent: 'center',
   },

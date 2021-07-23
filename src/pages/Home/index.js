@@ -10,6 +10,8 @@ import {
   AsyncStorage,
   LogBox,
   Alert,
+  RefreshControl,
+  FlatList,
 } from 'react-native';
 import {CardKontak, Modal} from '../../components';
 import FIREBASE from '../../config/FIREBASE';
@@ -24,6 +26,7 @@ export default class Home extends Component {
     this.state = {
       kontaks: {},
       kontaksKey: [],
+      refresh: false,
     };
   }
 
@@ -35,13 +38,16 @@ export default class Home extends Component {
     FIREBASE.database()
       .ref('Kontak')
       .once('value', querySnapShot => {
-        let data = querySnapShot.val() ? querySnapShot.val() : {};
-        let kontakItem = {...data};
-
-        this.setState({
-          kontaks: kontakItem,
-          kontaksKey: Object.keys(kontakItem),
+        var li = [];
+        querySnapShot.forEach(child => {
+          li.push({
+            key: child.key,
+            nama: child.val().nama,
+            nomorHp: child.val().nomorHp,
+            alamat: child.val().alamat,
+          });
         });
+        this.setState({kontaksKey: li});
       });
   };
 
@@ -82,7 +88,7 @@ export default class Home extends Component {
           <View style={styles.garis} />
         </View>
 
-        <View style={styles.listKontak}>
+        {/* <View style={styles.listKontak}>
           {kontaksKey.length > 0 ? (
             kontaksKey.map(key => (
               <CardKontak
@@ -96,7 +102,52 @@ export default class Home extends Component {
           ) : (
             <Text>Daftar Kosong</Text>
           )}
-        </View>
+        </View> */}
+
+        <FlatList
+          style={{flex: 1, marginTop: 10}}
+          data={this.state.kontaksKey}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refresh}
+              onRefresh={() => {
+                console.log('refreshing');
+                this.ambilData();
+                this.setState({refresh: false});
+              }}
+            />
+          }
+          renderItem={({item, index}) => (
+            // <TouchableOpacity
+            //   style={styles.listItem}
+            //   onPress={() =>
+            //     ToastAndroid.show(
+            //       item.namaBarang + ' ditekan',
+            //       ToastAndroid.LONG,
+            //     )
+            //   }>
+            //   <Text style={{color: '#ffffff', fontSize: 18}}>
+            //     {item.namaBarang}
+            //   </Text>
+            //   <Text style={{color: '#ffffff'}}>{item.harga}</Text>
+            // </TouchableOpacity>
+
+            <View style={styles.listKontak}>
+              {kontaksKey.length > 0 ? (
+                <CardKontak
+                  key={item.key}
+                  kontakItem={item}
+                  id={item.key}
+                  {...this.props}
+                  removeData={this.removeData}
+                />
+              ) : (
+                <Text>Daftar Kosong</Text>
+              )}
+            </View>
+          )}
+          keyExtractor={item => item.key}
+        />
 
         <View style={styles.wrapperButton}>
           <TouchableOpacity
@@ -149,6 +200,6 @@ const styles = StyleSheet.create({
   },
   listKontak: {
     paddingHorizontal: 30,
-    marginTop: 20,
+    paddingBottom: 10,
   },
 });

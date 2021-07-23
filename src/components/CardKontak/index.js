@@ -19,6 +19,7 @@ const CardKontak = ({id, kontakItem, navigation, removeData}) => {
           color={'orange'}
           size={20}
           style={styles.font_icon}
+          onPress={() => navigation.navigate('EditKontak', {id: id})}
         />
         <FontAwesomeIcon
           icon={faTrash}
@@ -40,7 +41,7 @@ const styles = StyleSheet.create({
     padding: 15,
     backgroundColor: 'white',
     borderRadius: 5,
-    marginBottom: 20,
+    marginTop: 5,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
