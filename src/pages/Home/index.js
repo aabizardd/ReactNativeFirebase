@@ -1,9 +1,21 @@
 import {faPlus} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import React, {Component} from 'react';
-import {Text, StyleSheet, View, TouchableOpacity} from 'react-native';
-import {CardKontak} from '../../components';
+
+import {
+  Text,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  AsyncStorage,
+  LogBox,
+  Alert,
+} from 'react-native';
+import {CardKontak, Modal} from '../../components';
 import FIREBASE from '../../config/FIREBASE';
+
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();
 
 export default class Home extends Component {
   constructor(props) {
@@ -16,6 +28,10 @@ export default class Home extends Component {
   }
 
   componentDidMount() {
+    this.ambilData();
+  }
+
+  ambilData = () => {
     FIREBASE.database()
       .ref('Kontak')
       .once('value', querySnapShot => {
@@ -27,10 +43,38 @@ export default class Home extends Component {
           kontaksKey: Object.keys(kontakItem),
         });
       });
-  }
+  };
+
+  removeData = id => {
+    Alert.alert(
+      'Info',
+      'Anda yakin akan menghapus data kontak?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: () => {
+            FIREBASE.database()
+              .ref('Kontak/' + id)
+              .remove();
+
+            Alert.alert('Hapus', 'Suskses hapus data');
+
+            this.ambilData();
+          },
+        },
+      ],
+      {cancleable: false},
+    );
+  };
 
   render() {
     const {kontaks, kontaksKey} = this.state;
+
     return (
       <View style={styles.page}>
         <View style={styles.header}>
@@ -46,6 +90,7 @@ export default class Home extends Component {
                 kontakItem={kontaks[key]}
                 id={key}
                 {...this.props}
+                removeData={this.removeData}
               />
             ))
           ) : (

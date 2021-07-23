@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {StyleSheet, TouchableOpacity, View, Text, Alert} from 'react-native';
-import {InputData} from '../../components';
+import {InputData, Modal} from '../../components/';
 import FIREBASE from '../../config/FIREBASE';
 
 export default class TambahKontak extends Component {
@@ -11,6 +11,7 @@ export default class TambahKontak extends Component {
       nama: '',
       nomorHp: '',
       alamat: '',
+      content: false,
     };
   }
 
@@ -21,6 +22,7 @@ export default class TambahKontak extends Component {
   };
 
   onSubmit = () => {
+    var is_success = true;
     if (this.state.nama && this.state.nomorHp && this.state.alamat) {
       const kontakReferensi = FIREBASE.database().ref('Kontak');
       const kontak = {
@@ -32,14 +34,22 @@ export default class TambahKontak extends Component {
       kontakReferensi
         .push(kontak)
         .then(data => {
-          Alert.alert('Success', 'Berhasil menambah data kontak');
-          this.props.navigation.replace('Home');
+          this.setState(previousState => ({content: !previousState.content}));
+          setTimeout(() => {
+            this.props.navigation.replace('Home');
+          }, 2000);
+
+          is_success = true;
         })
         .catch(error => console.log(error));
     } else {
       Alert.alert('Error', 'Silahkan lengkapi semua field');
+      is_success = false;
     }
+    return is_success;
   };
+
+  componentHideAndShow = () => {};
 
   render() {
     return (
@@ -68,11 +78,17 @@ export default class TambahKontak extends Component {
           namaState="alamat"
         />
 
-        <TouchableOpacity
-          style={styles.tombolSubmit}
-          onPress={() => this.onSubmit()}>
+        <TouchableOpacity style={styles.tombolSubmit} onPress={this.onSubmit}>
           <Text style={styles.textSubmit}>SUBMIT</Text>
         </TouchableOpacity>
+
+        {
+          // Display the modal in screen when state object "modal" is true.
+          // Hide the modal in screen when state object "modal" is false.
+          this.state.content ? (
+            <Modal visibility={true} message="Data berhasil ditambahkan" />
+          ) : null
+        }
       </View>
     );
   }

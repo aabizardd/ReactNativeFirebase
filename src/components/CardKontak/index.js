@@ -3,7 +3,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
-const CardKontak = ({id, kontakItem, navigation}) => {
+const CardKontak = ({id, kontakItem, navigation, removeData}) => {
   return (
     <TouchableOpacity
       style={styles.container}
@@ -25,6 +25,7 @@ const CardKontak = ({id, kontakItem, navigation}) => {
           color={'red'}
           size={20}
           style={styles.font_icon}
+          onPress={() => removeData(id)}
         />
       </View>
     </TouchableOpacity>
