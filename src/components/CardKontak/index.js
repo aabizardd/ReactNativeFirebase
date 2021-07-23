@@ -1,14 +1,70 @@
+import {faEdit, faTrash} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
-const CardKontak = ({key, kontakItem}) => {
+const CardKontak = ({id, kontakItem, navigation}) => {
   return (
-    <View>
-      <Text key={key}>{kontakItem.nama}</Text>
-    </View>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() => navigation.navigate('DetailKontak', {id: id})}>
+      <View>
+        <Text style={styles.nama}>{kontakItem.nama}</Text>
+        <Text style={styles.noHP}>Nomor HP : {kontakItem.nomorHp}</Text>
+      </View>
+
+      <View style={styles.icon}>
+        <FontAwesomeIcon
+          icon={faEdit}
+          color={'orange'}
+          size={20}
+          style={styles.font_icon}
+        />
+        <FontAwesomeIcon
+          icon={faTrash}
+          color={'red'}
+          size={20}
+          style={styles.font_icon}
+        />
+      </View>
+    </TouchableOpacity>
   );
 };
 
 export default CardKontak;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    padding: 15,
+    backgroundColor: 'white',
+    borderRadius: 5,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5,
+  },
+  nama: {
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  noHP: {
+    fontSize: 12,
+    color: 'grey',
+  },
+  icon: {
+    flexDirection: 'row',
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  font_icon: {
+    marginLeft: 5,
+  },
+});
